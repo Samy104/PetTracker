@@ -29,13 +29,29 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".LocatorActivity"
+            android:name=".ui.activities.MainActivity"
             android:label="@string/title_activity_locator" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.activities.ZoneAdderActivity"
+            android:label="@string/title_activity_zone_adder"
+            android:parentActivityName=".ui.activities.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.roadrunner.pettracker.ui.activities.MainActivity" />
+        </activity>
+        <activity
+            android:name=".ui.activities.ModuleAssociaterActivity"
+            android:label="@string/title_activity_module_associer"
+            android:parentActivityName=".ui.activities.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.roadrunner.pettracker.ui.activities.MainActivity" />
         </activity>
     </application>
 
