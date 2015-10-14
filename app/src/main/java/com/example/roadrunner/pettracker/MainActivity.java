@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 
+import com.example.roadrunner.pettracker.utils.DatabaseHelper;
 import com.google.android.gms.maps.GoogleMap;
 
 
@@ -31,12 +32,14 @@ public class MainActivity extends AppCompatActivity {
     private NavigationView nvDrawer;
 
     private GoogleMap mMap;
+    private DatabaseHelper databaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        databaseHelper = new DatabaseHelper(this);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -50,9 +53,6 @@ public class MainActivity extends AppCompatActivity {
         // Setup drawer view
 
         setupDrawerContent(nvDrawer);
-
-
-
 
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,mDrawer,toolbar,R.string.openDrawer, R.string.closeDrawer){
 
