@@ -1,16 +1,11 @@
 <resources>
-
-
-    <style name="MyTheme" parent="Theme.AppCompat">
-
-    </style>
-
-
-    <!-- Base application theme. -->
-    <style name="MyTheme.NoActionBar">
-        <!-- Both of these are needed -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:colorPrimary">@color/PrimaryColor</item>
+        <item name="android:colorPrimaryDark">@color/PrimaryDarkColor</item>
         <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <!-- Customize your theme here. -->
     </style>
-
 </resources>
