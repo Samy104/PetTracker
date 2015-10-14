@@ -1,7 +1,6 @@
 package com.example.roadrunner.pettracker;
 
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
@@ -12,7 +11,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -124,14 +122,16 @@ public class MainActivity extends AppCompatActivity {
 
         Class fragmentClass;
         switch(menuItem.getItemId()) {
-            case R.id.nav_first_fragment:
 
+            case R.id.nav_tracking_fragment:
                 fragmentClass = MapsFragment.class;
                 break;
-            case R.id.nav_second_fragment:
+
+            case R.id.nav_manage_module_fragment:
                 fragmentClass = MapsFragment.class;
                 break;
-            case R.id.nav_third_fragment:
+
+            case R.id.nav_manage_zone_fragment:
                 fragmentClass = MapsFragment.class;
                 break;
             default:
