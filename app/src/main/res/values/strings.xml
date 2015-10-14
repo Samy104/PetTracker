@@ -1,4 +1,13 @@
 <resources>
     <string name="app_name">PetTracker</string>
     <string name="title_activity_locator">Locator</string>
+
+    <array name="menu">
+        <item>titre 1</item>
+        <item>titre 2</item>
+        <item>titre 3</item>
+    </array>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

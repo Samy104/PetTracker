@@ -14,7 +14,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/MyTheme.NoActionBar" >
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -29,7 +29,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".LocatorActivity"
+            android:name=".MainActivity"
             android:label="@string/title_activity_locator" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
