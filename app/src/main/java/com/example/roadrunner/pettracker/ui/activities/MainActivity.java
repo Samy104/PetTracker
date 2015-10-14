@@ -1,4 +1,4 @@
-package com.example.roadrunner.pettracker;
+package com.example.roadrunner.pettracker.ui.activities;
 
 
 import android.app.Fragment;
@@ -15,6 +15,8 @@ import android.view.MenuItem;
 import android.view.View;
 
 
+import com.example.roadrunner.pettracker.ui.fragments.MapsFragment;
+import com.example.roadrunner.pettracker.R;
 import com.example.roadrunner.pettracker.utils.DatabaseHelper;
 import com.google.android.gms.maps.GoogleMap;
 
