@@ -13,3 +13,5 @@ Finalement, un petit coup de Google devrait aider à trouver la bonne version de
 
 Vous pouvez essayer celle-ci : [Android 5.1 Lollipop Gapps 4-21-15 (Works for all Android smartphones and tablets!) [LATEST VERSION]](https://drive.google.com/file/d/0B0MZv7btHQ1IUGUwdUt1Q1hGUkk/view?usp=sharing)
 
+ARM pour les Google Apps: https://drive.google.com/open?id=0B4G3pByCtrnJVjYwYllBTUN0SWM
+
