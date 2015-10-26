@@ -7,4 +7,13 @@
     <TextView android:layout_width="match_parent" android:layout_height="match_parent"
         android:text="@string/hello_blank_fragment" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_add_zone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        android:src="@drawable/ic_add_white_36dp"
+        />
+
 </FrameLayout>
