@@ -41,7 +41,7 @@ public class DatabaseTest extends InstrumentationTestCase {
         coordonnees.add(new Coordonnees(45.4944449, -73.5611256));
         coordonnees.add(new Coordonnees(45.4951989, -73.5625794));
 
-        Zone zone = new Zone("test zone", modules, true, coordonnees);
+        Zone zone = new Zone("test zone", true, coordonnees);
         modules.get(0).setCurrentZone(zone);
         modules.get(1).setCurrentZone(zone);
         coordonnees.get(0).setZone(zone);
@@ -59,6 +59,7 @@ public class DatabaseTest extends InstrumentationTestCase {
             coordonneesDao.deleteBuilder().delete();
 
             for(Module module : modules) {
+                zone.addModule(module);
                 moduleDao.createOrUpdate(module);
             }
 
