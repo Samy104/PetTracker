@@ -4,10 +4,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.content.Context;
+
 
 import com.example.roadrunner.pettracker.R;
 
 public class ModuleAssociaterActivity extends AppCompatActivity {
+
+    final Context context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

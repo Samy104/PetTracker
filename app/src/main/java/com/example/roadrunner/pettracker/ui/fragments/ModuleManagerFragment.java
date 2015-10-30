@@ -10,6 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
+// Addition
+import android.content.Context;
+import android.app.AlertDialog;
+import android.widget.EditText;
+import android.content.DialogInterface;
+
+
 
 import com.example.roadrunner.pettracker.R;
 import com.example.roadrunner.pettracker.model.Module;
@@ -54,17 +61,45 @@ public class ModuleManagerFragment extends Fragment {
         floatingActionButtonModuleAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(),"Bouton + pressé",Toast.LENGTH_SHORT).show();
+                // Dialog Layout view
+                LayoutInflater li = LayoutInflater.from(v.getContext());
+                View promptView = li.inflate(R.layout.fragment_module_prompt, null);
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(v.getContext());
+
+                // Set the layout for the builder
+                alertDialogBuilder.setView(promptView);
+
+                final EditText input = (EditText) promptView.findViewById(R.id.moduleName);
+
+                // Dialog Setup
+                alertDialogBuilder
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                moduleManagerAdapter.addModule(new Module(input.getText().toString()));
+                            }
+                        })
+                        .setNegativeButton("Cancel",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,	int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+
+                // Dialog Creation
+                AlertDialog alertD = alertDialogBuilder.create();
+                alertD.show();
+
+                // Notify the adapter of the changes
+                moduleManagerAdapter.notifyDataSetChanged();
             }
         });
 
-        ArrayList<Module> modules = new ArrayList<>();
-        modules.add(new Module("Rex"));
-        modules.add(new Module("Balto"));
-        modules.add(new Module("Chien"));
+        // Get the module adapter and populate the list from the DB
+        moduleManagerAdapter = new ModuleManagerAdapter(getActivity());
+        moduleManagerAdapter.populateModuleList();
 
-        moduleManagerAdapter = new ModuleManagerAdapter(getActivity(),modules);
-
+        //Set the list view adapter
         listViewModules.setAdapter(moduleManagerAdapter);
 
         moduleManagerAdapter.notifyDataSetChanged();
