@@ -21,27 +21,32 @@ public class Zone {
     @DatabaseField
     String name;
 
-    @ForeignCollectionField(eager = false)
+    @ForeignCollectionField(eager = true)
     Collection<Module> associatedModules;
 
     @DatabaseField
     boolean activated;
 
-    @ForeignCollectionField(eager = false)
+    @ForeignCollectionField(eager = true)
     Collection<Coordonnees> coordonnees;
 
     public Zone() {
     }
 
-    public Zone(String name, Collection<Module> associatedModules, boolean activated, Collection<Coordonnees> coordonnees) {
+    public Zone(String name, boolean activated, Collection<Coordonnees> coordonnees) {
         this.name = name;
-        this.associatedModules = associatedModules;
+        this.associatedModules = new ArrayList<>();
         this.activated = activated;
         this.coordonnees = coordonnees;
     }
 
+
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -74,5 +79,9 @@ public class Zone {
 
     public void setCoordonnees(Collection<Coordonnees> coordonnees) {
         this.coordonnees = coordonnees;
+    }
+
+    public void addModule(Module module) {
+        this.associatedModules.add(module);
     }
 }

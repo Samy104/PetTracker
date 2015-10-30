@@ -21,7 +21,7 @@ public class DatabaseTest extends InstrumentationTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        databaseHelper = new DatabaseHelper(getInstrumentation().getContext());
+        databaseHelper = new DatabaseHelper(getInstrumentation().getTargetContext());
     }
 
     @Override
@@ -41,20 +41,43 @@ public class DatabaseTest extends InstrumentationTestCase {
         coordonnees.add(new Coordonnees(45.4944449, -73.5611256));
         coordonnees.add(new Coordonnees(45.4951989, -73.5625794));
 
-        Zone zone = new Zone("test zone",modules,true,coordonnees);
+        Zone zone = new Zone("test zone", modules, true, coordonnees);
+        modules.get(0).setCurrentZone(zone);
+        modules.get(1).setCurrentZone(zone);
+        coordonnees.get(0).setZone(zone);
+        coordonnees.get(1).setZone(zone);
 
         try {
 
-            Dao<Module, ?> moduleDao = databaseHelper.getDao(Module.class);
+
             Dao<Zone, ?> zoneDao = databaseHelper.getDao(Zone.class);
             Dao<Coordonnees, ?> coordonneesDao = databaseHelper.getDao(Coordonnees.class);
+            Dao<Module, ?> moduleDao = databaseHelper.getDao(Module.class);
+
+            zoneDao.deleteBuilder().delete();
+            moduleDao.deleteBuilder().delete();
+            coordonneesDao.deleteBuilder().delete();
+
+            for(Module module : modules) {
+                moduleDao.createOrUpdate(module);
+            }
+
+            for(Coordonnees coordonnees1: coordonnees) {
+                coordonneesDao.createOrUpdate(coordonnees1);
+            }
 
             zoneDao.createOrUpdate(zone);
 
-            assertEquals(2, coordonneesDao.queryForAll().size());
+
             assertEquals(2, moduleDao.queryForAll().size());
+            assertEquals(2, coordonneesDao.queryForAll().size());
+
+            zoneDao.refresh(zone);
 
             assertEquals(2, zoneDao.queryForAll().get(0).getAssociatedModules().size());
+            assertEquals(2, zoneDao.queryForAll().get(0).getCoordonnees().size());
+
+
             assertNotNull(moduleDao.queryForAll().get(0));
 
             zoneDao.deleteBuilder().delete();
@@ -62,6 +85,7 @@ public class DatabaseTest extends InstrumentationTestCase {
             coordonneesDao.deleteBuilder().delete();
 
         } catch (SQLException e) {
+            assertTrue(e.getMessage(), false);
             e.printStackTrace();
         }
 

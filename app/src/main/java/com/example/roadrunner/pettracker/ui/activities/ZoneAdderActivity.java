@@ -75,18 +75,18 @@ public class ZoneAdderActivity extends AppCompatActivity {
                 @Override
                 public void onMapClick(LatLng latLng) {
                     points.add(latLng);
-                    if (points.size() == 2) {
+                    if (points.size() % 2 == 0) {
 
                         double distance = distance(
-                                points.get(0).latitude,
-                                points.get(0).longitude,
-                                points.get(1).latitude,
-                                points.get(1).longitude
+                                points.get(points.size()-2).latitude,
+                                points.get(points.size()-2).longitude,
+                                points.get(points.size()-1).latitude,
+                                points.get(points.size()-1).longitude
                         );
 
 
                         Circle circle = googleMap.addCircle(new CircleOptions()
-                                .center(points.get(0))
+                                .center(points.get(points.size()-2))
                                 .radius(distance)
                                 .strokeColor(Color.RED)
                                 .fillColor(Color.BLUE));

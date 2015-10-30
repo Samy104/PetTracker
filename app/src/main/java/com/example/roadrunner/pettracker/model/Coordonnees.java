@@ -1,5 +1,6 @@
 package com.example.roadrunner.pettracker.model;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -19,6 +20,9 @@ public class Coordonnees {
 
     @DatabaseField
     double longitude;
+
+    @DatabaseField(foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true, columnName = "zone_id")
+    Zone zone;
 
     public Coordonnees() {
     }
@@ -46,5 +50,17 @@ public class Coordonnees {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    public LatLng getLatLng() {
+        return new LatLng(latitude,longitude);
+    }
+
+    public Zone getZone() {
+        return zone;
+    }
+
+    public void setZone(Zone zone) {
+        this.zone = zone;
     }
 }

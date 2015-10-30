@@ -15,10 +15,13 @@ public class Module {
     int id;
 
     @DatabaseField
-    private String name;
+    String name;
 
-    @DatabaseField(foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true)
-    private Coordonnees currentPosition;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "coordonnees_id")
+    Coordonnees currentPosition;
+
+    @DatabaseField(foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true, columnName = "zone_id")
+    Zone currentZone;
 
     public Module() {
         currentPosition = new Coordonnees(45.521705, -73.577743);
@@ -26,6 +29,11 @@ public class Module {
 
     public Module(Coordonnees initial) {
         currentPosition = initial;
+    }
+
+    public Module(String name, Coordonnees currentPosition) {
+        this.name = name;
+        this.currentPosition = currentPosition;
     }
 
     public Module(String name) {
@@ -58,5 +66,13 @@ public class Module {
 
         currentPosition.setLongitude(x + deltaX);
         currentPosition.setLatitude(y + deltaY);
+    }
+
+    public Zone getCurrentZone() {
+        return currentZone;
+    }
+
+    public void setCurrentZone(Zone currentZone) {
+        this.currentZone = currentZone;
     }
 }
