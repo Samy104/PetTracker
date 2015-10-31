@@ -34,10 +34,9 @@ public class ModuleManagerAdapter extends BaseAdapter {
         this.modules = modules;
 
         DatabaseHelper dbh = new DatabaseHelper(context);
-        try
-        {
+        try {
             moduleDao = dbh.getDao(Module.class);
-        }  catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -47,10 +46,9 @@ public class ModuleManagerAdapter extends BaseAdapter {
         this.modules = new ArrayList<Module>();
 
         DatabaseHelper dbh = new DatabaseHelper(context);
-        try
-        {
+        try {
             moduleDao = dbh.getDao(Module.class);
-        }  catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -70,15 +68,14 @@ public class ModuleManagerAdapter extends BaseAdapter {
         return modules.get(position).getId();
     }
 
-    public void populateModuleList()
-    {
+    public void populateModuleList() {
         DatabaseHelper dbh = new DatabaseHelper(context);
-        try{
+        try {
             for (Module module : moduleDao.queryForAll()) {
                 modules.add(module);
             }
 
-        }  catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
@@ -87,13 +84,14 @@ public class ModuleManagerAdapter extends BaseAdapter {
 
     public void addModule(Module module) {
         DatabaseHelper dbh = new DatabaseHelper(context);
-        try{
+        try {
             moduleDao.create(module);
 
-        }  catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         modules.add(module);
+        notifyDataSetChanged();
     }
 
     @Override
@@ -116,8 +114,14 @@ public class ModuleManagerAdapter extends BaseAdapter {
         holder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "Suppression demandée", Toast.LENGTH_SHORT).show();
                 modules.remove(module);
+                DatabaseHelper dbh = new DatabaseHelper(context);
+                try {
+                    moduleDao.delete(module);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
                 notifyDataSetChanged();
             }
         });
