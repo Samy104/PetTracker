@@ -1,6 +1,8 @@
 package com.example.roadrunner.pettracker.ui.fragments;
 
+import android.app.Dialog;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -10,13 +12,15 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.roadrunner.pettracker.R;
-import com.example.roadrunner.pettracker.model.Coordonnees;
 import com.example.roadrunner.pettracker.model.Module;
 import com.example.roadrunner.pettracker.model.Zone;
+import com.example.roadrunner.pettracker.ui.activities.ModuleAssociaterActivity;
 import com.example.roadrunner.pettracker.ui.activities.ZoneAdderActivity;
 import com.example.roadrunner.pettracker.utils.DatabaseHelper;
 import com.example.roadrunner.pettracker.utils.MapsHelper;
@@ -128,7 +132,6 @@ public class ZoneManagerFragment extends Fragment {
                         }
                     });
 
-//                    marker.setVisible(false);
                     markerHashMap.put(zone.getName(), marker);
                 }
 
@@ -146,6 +149,73 @@ public class ZoneManagerFragment extends Fragment {
                             Marker marker = markerHashMap.get(zone.getName());
                             marker.setPosition(latLngClicked);
                             marker.showInfoWindow();
+
+
+                        }
+                    }
+                }
+            });
+
+            googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+                @Override
+                public void onMapLongClick(LatLng latLngClicked) {
+                    for (final Zone zone : zones) {
+                        if (MapsHelper.isLatLngInZone(latLngClicked, zone)) {
+                            final Dialog dialog = new Dialog(getActivity());
+
+                            //setting custom layout to dialog
+                            dialog.setContentView(R.layout.dialog_zone_manager_menu);
+                            dialog.setTitle(getString(R.string.choisir_action));
+
+                            Button associerModuleButton = (Button) dialog.findViewById(R.id.btn_associer_module);
+                            Button supprimerZoneButton = (Button) dialog.findViewById(R.id.btn_supprimer_zone);
+                            Button toggleZoneButton = (Button) dialog.findViewById(R.id.btn_activer_zone);
+
+                            if (zone.isActivated()) {
+                                toggleZoneButton.setText(getString(R.string.desactiver_zone));
+                            } else {
+                                toggleZoneButton.setText(getString(R.string.activer_zone));
+                            }
+
+                            associerModuleButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                    Intent intent = new Intent(getActivity(), ModuleAssociaterActivity.class);
+                                    startActivity(intent);
+                                    dialog.dismiss();
+                                }
+                            });
+
+                            supprimerZoneButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                    try {
+                                        zoneDao.delete(zone);
+                                    } catch (SQLException e) {
+                                        e.printStackTrace();
+                                    }
+                                    dialog.dismiss();
+                                    refreshFragment();
+                                }
+                            });
+
+                            toggleZoneButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    zone.setActivated(!zone.isActivated());
+                                    try {
+                                        zoneDao.update(zone);
+                                    } catch (SQLException e) {
+                                        e.printStackTrace();
+                                    }
+                                    dialog.dismiss();
+                                    refreshFragment();
+                                }
+                            });
+
+                            dialog.show();
 
 
                         }
@@ -190,6 +260,15 @@ public class ZoneManagerFragment extends Fragment {
         super.onLowMemory();
 
         mapView.onLowMemory();
+    }
+
+    private void refreshFragment() {
+        Fragment frg = null;
+        frg = getActivity().getFragmentManager().findFragmentByTag(ZoneManagerFragment.class.getName());
+        final FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.detach(frg);
+        ft.attach(frg);
+        ft.commit();
     }
 
 
