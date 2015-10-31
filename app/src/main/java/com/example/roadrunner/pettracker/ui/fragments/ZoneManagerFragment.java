@@ -63,7 +63,8 @@ public class ZoneManagerFragment extends Fragment {
             googleMap = mapView.getMap();
             googleMap.getUiSettings().setMyLocationButtonEnabled(false);
             googleMap.setMyLocationEnabled(true);
-            googleMap.getUiSettings().setZoomControlsEnabled(true);
+            googleMap.getUiSettings().setZoomControlsEnabled(false);
+            googleMap.getUiSettings().setAllGesturesEnabled(false);
 
             LatLng coordinate = new LatLng(45.494441, -73.560595);
             MapsInitializer.initialize(getActivity());
@@ -91,7 +92,7 @@ public class ZoneManagerFragment extends Fragment {
                     }
 
                     Marker marker = googleMap.addMarker(new MarkerOptions()
-                            .position(MapsHelper.getHighestCoordinate(new ArrayList<Coordonnees>(zone.getCoordonnees())))
+                            .position(new LatLng(45.494441, -73.560595)) //random position
                             .title(getString(R.string.module_list))
                             .snippet(titles));
 
