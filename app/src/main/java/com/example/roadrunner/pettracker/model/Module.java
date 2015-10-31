@@ -1,8 +1,10 @@
 package com.example.roadrunner.pettracker.model;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
+
 import java.util.Random;
 
 /**
@@ -17,14 +19,13 @@ public class Module {
     @DatabaseField
     String name;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "coordonnees_id")
+    @DatabaseField(foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true, columnName = "coordonnees_id")
     Coordonnees currentPosition;
 
     @DatabaseField(foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true, columnName = "zone_id")
     Zone currentZone;
 
     public Module() {
-        currentPosition = new Coordonnees(45.521705, -73.577743);
     }
 
     public Module(Coordonnees initial) {
@@ -48,24 +49,25 @@ public class Module {
         return name;
     }
 
-    public Coordonnees getCurrentPosition() { return currentPosition; }
+    public Coordonnees getCurrentPosition() {
+        return currentPosition;
+    }
 
     public void setName(String name) {
         this.name = name;
     }
 
     //This method will randomize a position relative to the current position
-    public void generateNewPosition()
-    {
+    public void generateNewPosition() {
         Random ran = new Random();
         double x = currentPosition.getLongitude();
         double y = currentPosition.getLatitude();
 
-        double deltaX = x + ran.nextDouble()/1000;
-        double deltaY = y + ran.nextDouble()/1000;
+        double deltaX = ran.nextDouble() / 5000;
+        double deltaY = ran.nextDouble() / 5000;
 
-        currentPosition.setLongitude(x + deltaX);
-        currentPosition.setLatitude(y + deltaY);
+        currentPosition.setLongitude(x + deltaX * (ran.nextBoolean() ? -1 : 1));
+        currentPosition.setLatitude(y + deltaY * (ran.nextBoolean() ? -1 : 1));
     }
 
     public Zone getCurrentZone() {
@@ -74,5 +76,9 @@ public class Module {
 
     public void setCurrentZone(Zone currentZone) {
         this.currentZone = currentZone;
+    }
+
+    public LatLng getLatLnt() {
+        return new LatLng(currentPosition.latitude, currentPosition.longitude);
     }
 }
