@@ -20,10 +20,13 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+import com.sromku.polygon.Point;
+import com.sromku.polygon.Polygon;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -72,6 +75,53 @@ public class MapsHelper {
         double square_dist = Math.pow(center_x - x, 2) + Math.pow(center_y - y, 2);
         return square_dist <= Math.pow(radius, 2);
 
+    }
+
+    public static boolean isPointInPolygonalZone(LatLng point, Zone zone) {
+        ArrayList<Coordonnees> coordonnees = new ArrayList<>(zone.getCoordonnees());
+
+        Polygon.Builder builder = Polygon.Builder();
+
+        for (Coordonnees coords : coordonnees) {
+            builder.addVertex(new Point(coords.getLatitude(), coords.getLongitude()));
+        }
+
+        Polygon polygon = builder.build();
+
+        return polygon.contains(new Point(point));
+    }
+
+    public static boolean isModuleInItsZone(Module module) {
+
+        ArrayList<Coordonnees> coordonnees = new ArrayList<>(module.getCurrentZone().getCoordonnees());
+
+        if (coordonnees.size() < 2) {
+            return false;
+        }
+
+        if (coordonnees.size() == 2) {
+            double radius = MapsHelper.getDistanceBetween(coordonnees.get(0), coordonnees.get(1));
+            return MapsHelper.isPointInCircle(coordonnees.get(0).getLatLng(), radius, module.getLatLnt());
+
+        } else {
+            return MapsHelper.isPointInPolygonalZone(module.getLatLnt(), module.getCurrentZone());
+        }
+    }
+
+    public static boolean isLatLngInZone(LatLng latLng, Zone zone) {
+        ArrayList<Coordonnees> coordonnees = new ArrayList<>(zone.getCoordonnees());
+
+        if (coordonnees.size() < 2) {
+            return false;
+        }
+
+        if (coordonnees.size() == 2) {
+            double radius = MapsHelper.getDistanceBetween(coordonnees.get(0), coordonnees.get(1));
+            return MapsHelper.isPointInCircle(coordonnees.get(0).getLatLng(), radius, latLng);
+
+        } else {
+            return MapsHelper.isPointInPolygonalZone(latLng, zone);
+        }
     }
 
 

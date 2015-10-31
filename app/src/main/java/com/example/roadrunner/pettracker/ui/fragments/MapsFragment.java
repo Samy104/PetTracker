@@ -47,6 +47,8 @@ public class MapsFragment extends Fragment {
     HashMap<String, Marker> moduleMarkerHashMap = new HashMap<>();
     private Dao<Zone, ?> zoneDao;
     private ArrayList<Zone> zones;
+    private Handler markerMovingHandler;
+    private MarkerMovingRunnable markerMovingThread;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -90,16 +92,16 @@ public class MapsFragment extends Fragment {
                 e.printStackTrace();
             }
 
-            final Handler customHandler = new android.os.Handler();
+            markerMovingHandler = new android.os.Handler();
 
-            MarkerMovingRunnable markerMovingThread = new MarkerMovingRunnable() {
+            markerMovingThread = new MarkerMovingRunnable() {
                 @Override
                 public void run() {
                     super.run();
-                    customHandler.postDelayed(this, 2000);
+                    markerMovingHandler.postDelayed(this, 2000);
                 }
             };
-            customHandler.postDelayed(markerMovingThread, 2000);
+            markerMovingHandler.postDelayed(markerMovingThread, 2000);
 
         }
 
@@ -107,6 +109,11 @@ public class MapsFragment extends Fragment {
 
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        markerMovingHandler.removeCallbacks(markerMovingThread);
+    }
 
     @Override
     public void onResume() {
@@ -181,51 +188,20 @@ public class MapsFragment extends Fragment {
                     continue;
                 }
 
-                if (coordonnees.size() == 2) {
-
-                    boolean outOfZone = true;
-                    double radius = MapsHelper.getDistanceBetween(coordonnees.get(0), coordonnees.get(1));
-                    if (MapsHelper.isPointInCircle(coordonnees.get(0).getLatLng(), radius, module.getLatLnt())) {
-                        outOfZone = false;
-                    }
-                    module.generateNewPosition();
-                    Marker marker = moduleMarkerHashMap.get(module.getName());
-                    animateMarker(marker, module.getLatLnt(), false);
-                    moduleMarkerHashMap.put(module.getName(), marker);
-
-                    if (!MapsHelper.isPointInCircle(coordonnees.get(0).getLatLng(), radius, module.getLatLnt()) && !outOfZone) {
-                        notifyExitZone(module);
-                    }
-
-
-                } else {
-
-                    Polygon.Builder builder = Polygon.Builder();
-
-                    for (Coordonnees coords : coordonnees) {
-                        builder.addVertex(new Point(coords.getLatitude(), coords.getLongitude()));
-                    }
-
-                    Polygon polygon = builder.build();
-
-                    boolean outOfZone = true;
-                    if (polygon.contains(new Point(module.getLatLnt()))) {
-                        outOfZone = false;
-                    }
-                    module.generateNewPosition();
-                    Marker marker = moduleMarkerHashMap.get(module.getName());
-                    animateMarker(marker, module.getLatLnt(), false);
-                    moduleMarkerHashMap.put(module.getName(), marker);
-
-                    if (!polygon.contains(new Point(module.getLatLnt())) && !outOfZone) {
-                        notifyExitZone(module);
-                    }
+                boolean outOfZone = true;
+                if (MapsHelper.isModuleInItsZone(module)) {
+                    outOfZone = false;
                 }
+                module.generateNewPosition();
+                Marker marker = moduleMarkerHashMap.get(module.getName());
+                animateMarker(marker, module.getLatLnt(), false);
+                moduleMarkerHashMap.put(module.getName(), marker);
+
+                if (!MapsHelper.isModuleInItsZone(module) && !outOfZone) {
+                    notifyExitZone(module);
+                }
+
             }
         }
     }
-
-
-
-
 }
