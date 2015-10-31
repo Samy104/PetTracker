@@ -20,6 +20,7 @@ import com.example.roadrunner.pettracker.R;
 import com.example.roadrunner.pettracker.ui.fragments.ModuleManagerFragment;
 import com.example.roadrunner.pettracker.ui.fragments.ZoneManagerFragment;
 import com.example.roadrunner.pettracker.utils.DatabaseHelper;
+import com.example.roadrunner.pettracker.utils.MapsHelper;
 import com.example.roadrunner.pettracker.utils.Utils;
 import com.google.android.gms.maps.GoogleMap;
 
@@ -44,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
         databaseHelper = new DatabaseHelper(this);
 
-        Utils.createTestDatas(databaseHelper);
+        MapsHelper.createTestDatas(databaseHelper);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
