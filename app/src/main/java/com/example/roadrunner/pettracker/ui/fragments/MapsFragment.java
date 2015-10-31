@@ -70,7 +70,7 @@ public class MapsFragment extends Fragment {
 
             try {
                 zoneDao = databaseHelper.getDao(Zone.class);
-                zones = new ArrayList<>(zoneDao.queryForAll());
+                zones = new ArrayList<>(zoneDao.queryBuilder().where().eq("activated",true).query());
                 MapsHelper.displayZones(googleMap, zones);
                 moduleDao = databaseHelper.getDao(Module.class);
             } catch (SQLException e) {
@@ -183,7 +183,7 @@ public class MapsFragment extends Fragment {
             for (Module module : modules) {
 
                 boolean outOfZone = true;
-                if (module.getCurrentZone() != null) {
+                if (module.getCurrentZone() != null && module.getCurrentZone().isActivated()) {
                     ArrayList<Coordonnees> coordonnees = new ArrayList<>(module.getCurrentZone().getCoordonnees());
 
                     if (coordonnees.size() < 2) {
