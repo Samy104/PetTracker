@@ -1,6 +1,7 @@
 package com.example.roadrunner.pettracker.ui.adapters;
 
 import android.content.Context;
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,8 +12,13 @@ import android.widget.Toast;
 
 import com.example.roadrunner.pettracker.R;
 import com.example.roadrunner.pettracker.model.Module;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
+
+import com.example.roadrunner.pettracker.utils.DatabaseHelper;
 
 /**
  * Created by gnut3ll4 on 14/10/15.
@@ -21,11 +27,30 @@ public class ModuleManagerAdapter extends BaseAdapter {
 
     private Context context;
     private ArrayList<Module> modules;
-
+    private Dao<Module, ?> moduleDao;
 
     public ModuleManagerAdapter(Context context, ArrayList<Module> modules) {
         this.context = context;
         this.modules = modules;
+
+        DatabaseHelper dbh = new DatabaseHelper(context);
+        try {
+            moduleDao = dbh.getDao(Module.class);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public ModuleManagerAdapter(Context context) {
+        this.context = context;
+        this.modules = new ArrayList<Module>();
+
+        DatabaseHelper dbh = new DatabaseHelper(context);
+        try {
+            moduleDao = dbh.getDao(Module.class);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -43,8 +68,30 @@ public class ModuleManagerAdapter extends BaseAdapter {
         return modules.get(position).getId();
     }
 
+    public void populateModuleList() {
+        DatabaseHelper dbh = new DatabaseHelper(context);
+        try {
+            for (Module module : moduleDao.queryForAll()) {
+                modules.add(module);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        notifyDataSetChanged();
+    }
+
     public void addModule(Module module) {
+        DatabaseHelper dbh = new DatabaseHelper(context);
+        try {
+            moduleDao.create(module);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         modules.add(module);
+        notifyDataSetChanged();
     }
 
     @Override
@@ -67,8 +114,14 @@ public class ModuleManagerAdapter extends BaseAdapter {
         holder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "Suppression demandée", Toast.LENGTH_SHORT).show();
                 modules.remove(module);
+                DatabaseHelper dbh = new DatabaseHelper(context);
+                try {
+                    moduleDao.delete(module);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
                 notifyDataSetChanged();
             }
         });

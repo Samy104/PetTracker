@@ -1,5 +1,7 @@
 package com.example.roadrunner.pettracker.model;
 
+import com.example.roadrunner.pettracker.utils.MapsHelper;
+import com.example.roadrunner.pettracker.utils.Utils;
 import com.google.android.gms.maps.model.LatLng;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
@@ -28,10 +30,6 @@ public class Module {
     public Module() {
     }
 
-    public Module(Coordonnees initial) {
-        currentPosition = initial;
-    }
-
     public Module(String name, Coordonnees currentPosition) {
         this.name = name;
         this.currentPosition = currentPosition;
@@ -39,6 +37,21 @@ public class Module {
 
     public Module(String name) {
         this.name = name;
+        Random ran = new Random();
+        double baseX = 45.494020, baseY = -73.563076;
+        double diffX = 45.495314, diffY = -73.567303;
+
+        double distance = MapsHelper.getDistanceBetween(new Coordonnees(baseX, baseY), new Coordonnees(diffX, diffY));
+
+
+        double deltaX = distance * ran.nextDouble();
+        double deltaY = distance * ran.nextDouble();
+
+        currentPosition = new Coordonnees(baseX, baseY);
+        //Random moving
+        currentPosition.setLatitude(baseX + deltaX * (ran.nextBoolean() ? -1 : 1));
+        currentPosition.setLongitude(baseY + deltaY * (ran.nextBoolean() ? -1 : 1));
+
     }
 
     public int getId() {
@@ -83,6 +96,9 @@ public class Module {
     }
 
     public LatLng getLatLnt() {
+        if (currentPosition == null) {
+            return null;
+        }
         return new LatLng(currentPosition.latitude, currentPosition.longitude);
     }
 }

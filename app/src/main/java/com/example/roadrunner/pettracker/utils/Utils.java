@@ -19,7 +19,6 @@ import java.util.ArrayList;
 public class Utils {
 
 
-
     public static int stringToColour(String str) {
         int hash = str.hashCode();
 
@@ -31,4 +30,5 @@ public class Utils {
 
 
     }
+
 }
