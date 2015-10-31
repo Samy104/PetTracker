@@ -74,12 +74,12 @@ public class ModuleManagerFragment extends Fragment {
                 // Dialog Setup
                 alertDialogBuilder
                         .setCancelable(false)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 moduleManagerAdapter.addModule(new Module(input.getText().toString()));
                             }
                         })
-                        .setNegativeButton("Cancel",
+                        .setNegativeButton(getString(R.string.cancel),
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog,	int id) {
                                         dialog.cancel();

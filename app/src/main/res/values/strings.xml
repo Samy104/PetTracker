@@ -33,4 +33,7 @@
     <string name="desactiver_zone">Désactiver la zone</string>
 
     <string name="choisir_action">Choisir une action</string>
+
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
 </resources>

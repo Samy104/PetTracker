@@ -70,7 +70,7 @@ public class MapsFragment extends Fragment {
 
             try {
                 zoneDao = databaseHelper.getDao(Zone.class);
-                zones = new ArrayList<>(zoneDao.queryBuilder().where().eq("activated",true).query());
+                zones = new ArrayList<>(zoneDao.queryBuilder().where().eq("activated", true).query());
                 MapsHelper.displayZones(googleMap, zones);
                 moduleDao = databaseHelper.getDao(Module.class);
             } catch (SQLException e) {
@@ -81,11 +81,16 @@ public class MapsFragment extends Fragment {
                 modules = new ArrayList<>(moduleDao.queryForAll());
 
                 for (Module module : modules) {
-                    Marker marker = googleMap.addMarker(new MarkerOptions()
-                            .position(module.getLatLnt())
-                            .title(module.getName()));
+                    try {
+                        Marker marker = googleMap.addMarker(new MarkerOptions()
+                                .position(module.getLatLnt())
+                                .title(module.getName()));
 
-                    moduleMarkerHashMap.put(module.getName(), marker);
+                        moduleMarkerHashMap.put(module.getName(), marker);
+
+                    } catch (IllegalArgumentException e) {
+                        e.printStackTrace();
+                    }
                 }
 
             } catch (SQLException e) {
