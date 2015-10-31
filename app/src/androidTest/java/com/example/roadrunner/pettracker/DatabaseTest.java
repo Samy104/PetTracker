@@ -58,12 +58,12 @@ public class DatabaseTest extends InstrumentationTestCase {
             moduleDao.deleteBuilder().delete();
             coordonneesDao.deleteBuilder().delete();
 
-            for(Module module : modules) {
+            for (Module module : modules) {
                 zone.addModule(module);
                 moduleDao.createOrUpdate(module);
             }
 
-            for(Coordonnees coordonnees1: coordonnees) {
+            for (Coordonnees coordonnees1 : coordonnees) {
                 coordonneesDao.createOrUpdate(coordonnees1);
             }
 
