@@ -66,8 +66,12 @@ public class Module {
         double deltaX = ran.nextDouble() / 5000;
         double deltaY = ran.nextDouble() / 5000;
 
-        currentPosition.setLongitude(x + deltaX * (ran.nextBoolean() ? -1 : 1));
-        currentPosition.setLatitude(y + deltaY * (ran.nextBoolean() ? -1 : 1));
+        //Random moving
+//        currentPosition.setLongitude(x + deltaX * (ran.nextBoolean() ? -1 : 1));
+//        currentPosition.setLatitude(y + deltaY * (ran.nextBoolean() ? -1 : 1));
+
+        currentPosition.setLongitude(x + deltaX);
+        currentPosition.setLatitude(y + deltaY);
     }
 
     public Zone getCurrentZone() {
