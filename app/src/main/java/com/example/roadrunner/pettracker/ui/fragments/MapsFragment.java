@@ -182,24 +182,35 @@ public class MapsFragment extends Fragment {
         public void run() {
             for (Module module : modules) {
 
-                ArrayList<Coordonnees> coordonnees = new ArrayList<>(module.getCurrentZone().getCoordonnees());
-
-                if (coordonnees.size() < 2) {
-                    continue;
-                }
-
                 boolean outOfZone = true;
-                if (MapsHelper.isModuleInItsZone(module)) {
-                    outOfZone = false;
-                }
-                module.generateNewPosition();
-                Marker marker = moduleMarkerHashMap.get(module.getName());
-                animateMarker(marker, module.getLatLnt(), false);
-                moduleMarkerHashMap.put(module.getName(), marker);
+                if (module.getCurrentZone() != null) {
+                    ArrayList<Coordonnees> coordonnees = new ArrayList<>(module.getCurrentZone().getCoordonnees());
 
-                if (!MapsHelper.isModuleInItsZone(module) && !outOfZone) {
-                    notifyExitZone(module);
+                    if (coordonnees.size() < 2) {
+                        continue;
+                    }
+
+
+                    if (MapsHelper.isModuleInItsZone(module)) {
+                        outOfZone = false;
+                    }
+
+                    module.generateNewPosition();
+                    Marker marker = moduleMarkerHashMap.get(module.getName());
+                    animateMarker(marker, module.getLatLnt(), false);
+                    moduleMarkerHashMap.put(module.getName(), marker);
+
+                    if (!MapsHelper.isModuleInItsZone(module) && !outOfZone) {
+                        notifyExitZone(module);
+                    }
+                } else {
+
+                    module.generateNewPosition();
+                    Marker marker = moduleMarkerHashMap.get(module.getName());
+                    animateMarker(marker, module.getLatLnt(), false);
+                    moduleMarkerHashMap.put(module.getName(), marker);
                 }
+
 
             }
         }

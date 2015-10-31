@@ -41,12 +41,15 @@ public class MapsHelper {
             ArrayList<Coordonnees> coordonnees = new ArrayList<Coordonnees>(zone.getCoordonnees());
             Collection<Module> associatedModules = zone.getAssociatedModules();
 
+
+            int fillColor = zone.isActivated() ? Utils.stringToColour(zone.getName()) : Color.argb(0,0,0,0);
+
             if (coordonnees.size() == 2) { //If this is a circle
                 Circle circle = map.addCircle(new CircleOptions()
                         .center(coordonnees.get(0).getLatLng())
                         .radius(getRadius(coordonnees.get(0), coordonnees.get(1)))
                         .strokeColor(Color.BLACK)
-                        .fillColor(Utils.stringToColour(zone.getName())));
+                        .fillColor(fillColor));
             } else if (coordonnees.size() > 2) { // If this is a polygon
                 PolygonOptions polygon = new PolygonOptions();
                 for (Coordonnees coord : coordonnees) {

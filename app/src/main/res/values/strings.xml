@@ -26,4 +26,11 @@
     <string name="delete">delete</string>
 
     <string name="module_list">Modules associés</string>
+
+    <string name="associer_module">Associer un module</string>
+    <string name="supprimer_zone">Supprimer la zone</string>
+    <string name="activer_zone">Activer la zone</string>
+    <string name="desactiver_zone">Désactiver la zone</string>
+
+    <string name="choisir_action">Choisir une action</string>
 </resources>
