@@ -2,13 +2,19 @@ package com.example.roadrunner.pettracker.ui.fragments;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.example.roadrunner.pettracker.R;
+import com.example.roadrunner.pettracker.model.Coordonnees;
 import com.example.roadrunner.pettracker.model.Module;
 import com.example.roadrunner.pettracker.model.Zone;
 import com.example.roadrunner.pettracker.ui.activities.ZoneAdderActivity;
@@ -18,11 +24,15 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.j256.ormlite.dao.Dao;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ZoneManagerFragment extends Fragment {
 
@@ -32,6 +42,7 @@ public class ZoneManagerFragment extends Fragment {
     private Dao<Zone, ?> zoneDao;
     private ArrayList<Zone> zones;
     private Dao<Module, ?> moduleDao;
+    private HashMap<String, Marker> markerHashMap = new HashMap<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,9 +74,85 @@ public class ZoneManagerFragment extends Fragment {
                 zones = new ArrayList<>(zoneDao.queryForAll());
                 MapsHelper.displayZones(googleMap, zones);
                 moduleDao = databaseHelper.getDao(Module.class);
+
+                for (Zone zone : zones) {
+
+                    String titles = "";
+
+                    int i = 0;
+
+                    for (Module module : zone.getAssociatedModules()) {
+                        if(i == zone.getAssociatedModules().size()-1) {
+                            titles += module.getName();
+                        } else {
+                            titles += module.getName() + "\n";
+                        }
+                        i++;
+                    }
+
+                    Marker marker = googleMap.addMarker(new MarkerOptions()
+                            .position(MapsHelper.getHighestCoordinate(new ArrayList<Coordonnees>(zone.getCoordonnees())))
+                            .title(getString(R.string.module_list))
+                            .snippet(titles));
+
+                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.one_px_transparent));
+
+                    googleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+
+                        @Override
+                        public View getInfoWindow(Marker arg0) {
+                            return null;
+                        }
+
+                        @Override
+                        public View getInfoContents(Marker marker) {
+
+                            LinearLayout info = new LinearLayout(getActivity());
+                            info.setOrientation(LinearLayout.VERTICAL);
+
+                            TextView title = new TextView(getActivity());
+                            title.setTextColor(Color.BLACK);
+                            title.setGravity(Gravity.CENTER);
+                            title.setTypeface(null, Typeface.BOLD);
+                            title.setText(marker.getTitle());
+
+                            TextView snippet = new TextView(getActivity());
+                            snippet.setTextColor(Color.GRAY);
+                            snippet.setText(marker.getSnippet());
+
+                            info.addView(title);
+                            info.addView(snippet);
+
+                            return info;
+                        }
+                    });
+
+//                    marker.setVisible(false);
+                    markerHashMap.put(zone.getName(), marker);
+                }
+
+
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+
+
+            googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                @Override
+                public void onMapClick(LatLng latLngClicked) {
+                    for (Zone zone : zones) {
+                        if (MapsHelper.isLatLngInZone(latLngClicked, zone)) {
+                            Marker marker = markerHashMap.get(zone.getName());
+                            marker.setPosition(latLngClicked);
+                            marker.showInfoWindow();
+
+
+                        }
+                    }
+                }
+            });
+
+
         }
 
 
@@ -103,8 +190,6 @@ public class ZoneManagerFragment extends Fragment {
 
         mapView.onLowMemory();
     }
-
-
 
 
 }

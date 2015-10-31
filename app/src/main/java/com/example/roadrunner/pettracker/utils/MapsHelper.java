@@ -26,6 +26,7 @@ import com.sromku.polygon.Polygon;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -94,7 +95,7 @@ public class MapsHelper {
 
         ArrayList<Coordonnees> coordonnees = new ArrayList<>(module.getCurrentZone().getCoordonnees());
 
-        if(coordonnees.size() < 2) {
+        if (coordonnees.size() < 2) {
             return false;
         }
 
@@ -103,7 +104,23 @@ public class MapsHelper {
             return MapsHelper.isPointInCircle(coordonnees.get(0).getLatLng(), radius, module.getLatLnt());
 
         } else {
-            return MapsHelper.isPointInPolygonalZone(module.getLatLnt(),module.getCurrentZone());
+            return MapsHelper.isPointInPolygonalZone(module.getLatLnt(), module.getCurrentZone());
+        }
+    }
+
+    public static boolean isLatLngInZone(LatLng latLng, Zone zone) {
+        ArrayList<Coordonnees> coordonnees = new ArrayList<>(zone.getCoordonnees());
+
+        if (coordonnees.size() < 2) {
+            return false;
+        }
+
+        if (coordonnees.size() == 2) {
+            double radius = MapsHelper.getDistanceBetween(coordonnees.get(0), coordonnees.get(1));
+            return MapsHelper.isPointInCircle(coordonnees.get(0).getLatLng(), radius, latLng);
+
+        } else {
+            return MapsHelper.isPointInPolygonalZone(latLng, zone);
         }
     }
 
