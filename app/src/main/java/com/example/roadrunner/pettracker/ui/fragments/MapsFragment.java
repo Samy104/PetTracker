@@ -188,46 +188,19 @@ public class MapsFragment extends Fragment {
                     continue;
                 }
 
-                if (coordonnees.size() == 2) {
-
-                    boolean outOfZone = true;
-                    double radius = MapsHelper.getDistanceBetween(coordonnees.get(0), coordonnees.get(1));
-                    if (MapsHelper.isPointInCircle(coordonnees.get(0).getLatLng(), radius, module.getLatLnt())) {
-                        outOfZone = false;
-                    }
-                    module.generateNewPosition();
-                    Marker marker = moduleMarkerHashMap.get(module.getName());
-                    animateMarker(marker, module.getLatLnt(), false);
-                    moduleMarkerHashMap.put(module.getName(), marker);
-
-                    if (!MapsHelper.isPointInCircle(coordonnees.get(0).getLatLng(), radius, module.getLatLnt()) && !outOfZone) {
-                        notifyExitZone(module);
-                    }
-
-
-                } else {
-
-                    Polygon.Builder builder = Polygon.Builder();
-
-                    for (Coordonnees coords : coordonnees) {
-                        builder.addVertex(new Point(coords.getLatitude(), coords.getLongitude()));
-                    }
-
-                    Polygon polygon = builder.build();
-
-                    boolean outOfZone = true;
-                    if (polygon.contains(new Point(module.getLatLnt()))) {
-                        outOfZone = false;
-                    }
-                    module.generateNewPosition();
-                    Marker marker = moduleMarkerHashMap.get(module.getName());
-                    animateMarker(marker, module.getLatLnt(), false);
-                    moduleMarkerHashMap.put(module.getName(), marker);
-
-                    if (!polygon.contains(new Point(module.getLatLnt())) && !outOfZone) {
-                        notifyExitZone(module);
-                    }
+                boolean outOfZone = true;
+                if (MapsHelper.isModuleInItsZone(module)) {
+                    outOfZone = false;
                 }
+                module.generateNewPosition();
+                Marker marker = moduleMarkerHashMap.get(module.getName());
+                animateMarker(marker, module.getLatLnt(), false);
+                moduleMarkerHashMap.put(module.getName(), marker);
+
+                if (!MapsHelper.isModuleInItsZone(module) && !outOfZone) {
+                    notifyExitZone(module);
+                }
+
             }
         }
     }
