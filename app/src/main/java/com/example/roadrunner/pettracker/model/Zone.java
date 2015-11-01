@@ -84,4 +84,7 @@ public class Zone {
     public void addModule(Module module) {
         this.associatedModules.add(module);
     }
+    public void removeModule(Module module) {
+        this.associatedModules.remove(module);
+    }
 }

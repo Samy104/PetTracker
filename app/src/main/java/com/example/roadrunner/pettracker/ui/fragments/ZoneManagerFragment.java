@@ -115,6 +115,7 @@ public class ZoneManagerFragment extends Fragment {
                                 public void onClick(View v) {
 
                                     Intent intent = new Intent(getActivity(), ModuleAssociaterActivity.class);
+                                    intent.putExtra("zoneID",zone.getId());
                                     startActivity(intent);
                                     dialog.dismiss();
                                 }
