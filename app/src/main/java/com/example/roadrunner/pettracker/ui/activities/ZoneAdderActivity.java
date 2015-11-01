@@ -1,14 +1,24 @@
 package com.example.roadrunner.pettracker.ui.activities;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.example.roadrunner.pettracker.R;
+import com.example.roadrunner.pettracker.model.Coordonnees;
+import com.example.roadrunner.pettracker.model.Zone;
+import com.example.roadrunner.pettracker.utils.DatabaseHelper;
+import com.example.roadrunner.pettracker.utils.GrahamScan;
+import com.example.roadrunner.pettracker.utils.MapsHelper;
+import com.example.roadrunner.pettracker.utils.Point2D;
+import com.example.roadrunner.pettracker.utils.Utils;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -17,9 +27,12 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.j256.ormlite.dao.Dao;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class ZoneAdderActivity extends AppCompatActivity {
@@ -27,19 +40,54 @@ public class ZoneAdderActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private MapView mapView;
     private GoogleMap googleMap;
-    private ArrayList<LatLng> points;
+    private ArrayList<Coordonnees> points;
+    private DatabaseHelper databaseHelper;
+    private Dao<Zone, ?> zoneDao;
+    private Dao<Coordonnees, ?> coordonneesDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_zone_adder);
+        points = new ArrayList<>();
 
+        databaseHelper = new DatabaseHelper(ZoneAdderActivity.this);
+        try {
+            zoneDao = databaseHelper.getDao(Zone.class);
+            coordonneesDao = databaseHelper.getDao(Coordonnees.class);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        final FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.fab_confirm_add_zone);
+
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                try {
+
+                    Zone zone = new Zone("Test", true, points);
+                    for (Coordonnees coordonnees : points) {
+                        coordonnees.setZone(zone);
+                    }
+
+                    for (Coordonnees coordonnees : points) {
+                        coordonneesDao.createOrUpdate(coordonnees);
+                    }
+
+                    zoneDao.create(zone);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                onBackPressed();
+            }
+        });
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        points = new ArrayList<>();
 
         mapView = (MapView) findViewById(R.id.map);
 
@@ -49,49 +97,57 @@ public class ZoneAdderActivity extends AppCompatActivity {
             googleMap = mapView.getMap();
 
             googleMap.getUiSettings().setMyLocationButtonEnabled(false);
-
             googleMap.setMyLocationEnabled(true);
-
-            googleMap.getUiSettings().setZoomControlsEnabled(true);
-
-            PolylineOptions rectOptions = new PolylineOptions()
-                    .add(new LatLng(37.35, -122.0))
-                    .add(new LatLng(37.45, -122.0))  // North of the previous point, but at the same longitude
-                    .add(new LatLng(37.45, -122.2))  // Same latitude, and 30km to the west
-                    .add(new LatLng(37.35, -122.2))  // Same longitude, and 16km to the south
-                    .add(new LatLng(37.35, -122.0)); // Closes the polyline.
-
-// Get back the mutable Polyline
-            Polyline polyline = googleMap.addPolyline(rectOptions);
+            googleMap.getUiSettings().setZoomControlsEnabled(false);
 
             MapsInitializer.initialize(this);
 
-            LatLng coordinate = new LatLng(37, -122);
-            CameraUpdate yourLocation = CameraUpdateFactory.newLatLngZoom(coordinate, 5);
-            googleMap.animateCamera(yourLocation);
+            LatLng coordinate = new LatLng(45.494441, -73.560595);
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinate, 15));
 
             googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                 @Override
                 public void onMapClick(LatLng latLng) {
-                    points.add(latLng);
-                    if (points.size() % 2 == 0) {
+                    googleMap.clear();
+                    points.add(new Coordonnees(latLng));
 
-                        double distance = distance(
-                                points.get(points.size() - 2).latitude,
-                                points.get(points.size() - 2).longitude,
-                                points.get(points.size() - 1).latitude,
-                                points.get(points.size() - 1).longitude
-                        );
+                    floatingActionButton.setVisibility(points.size() > 1 ? View.VISIBLE : View.GONE);
 
+                    if (points.size() == 2) {
+
+                        double distance = MapsHelper.getRadius(points.get(0), points.get(1));
 
                         Circle circle = googleMap.addCircle(new CircleOptions()
-                                .center(points.get(points.size() - 2))
+                                .center(points.get(0).getLatLng())
                                 .radius(distance)
-                                .strokeColor(Color.RED)
-                                .fillColor(Color.BLUE));
+                                .strokeColor(Color.BLACK)
+                                .fillColor(Utils.stringToColour("Temp")));
+
+                    } else if (points.size() > 2) {
+
+                        Point2D[] points2D = new Point2D[points.size()];
+                        for (int i = 0; i < points.size(); i++) {
+                            points2D[i] = new Point2D(points.get(i).getLatitude(), points.get(i).getLongitude());
+                        }
+
+                        GrahamScan grahamScan = new GrahamScan(points2D);
+
+                        points.clear();
+                        for (Point2D point2D : grahamScan.hull()) {
+                            points.add(new Coordonnees(point2D.x(), point2D.y()));
+                        }
+
+                        PolygonOptions polygon = new PolygonOptions();
+                        for (Coordonnees coord : points) {
+                            polygon.add(coord.getLatLng());
+                        }
+                        polygon.fillColor(Utils.stringToColour("Temp"));
+
+                        googleMap.addPolygon(polygon);
+
                     }
 
-                    Toast.makeText(ZoneAdderActivity.this, "latLng:" + latLng, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(ZoneAdderActivity.this, "latLng:" + latLng, Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -99,21 +155,6 @@ public class ZoneAdderActivity extends AppCompatActivity {
         }
 
 
-    }
-
-    public double distance(double lat_a, double lng_a, double lat_b, double lng_b) {
-        double earthRadius = 3958.75;
-        double latDiff = Math.toRadians(lat_b - lat_a);
-        double lngDiff = Math.toRadians(lng_b - lng_a);
-        double a = Math.sin(latDiff / 2) * Math.sin(latDiff / 2) +
-                Math.cos(Math.toRadians(lat_a)) * Math.cos(Math.toRadians(lat_b)) *
-                        Math.sin(lngDiff / 2) * Math.sin(lngDiff / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double distance = earthRadius * c;
-
-        int meterConversion = 1609;
-
-        return new Double(distance * meterConversion).floatValue();
     }
 
     @Override
@@ -135,11 +176,7 @@ public class ZoneAdderActivity extends AppCompatActivity {
             return true;
         }
         if (id == android.R.id.home) {
-            Toast.makeText(this, "back", Toast.LENGTH_SHORT).show();
             onBackPressed();
-
-
-//            getFragmentManager().popBackStackImmediate();
         }
 
 
