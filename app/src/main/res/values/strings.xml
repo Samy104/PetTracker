@@ -36,4 +36,8 @@
 
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="enter_name">Entrez le nom de la zone</string>
+    <string name="annuler">Annuler</string>
+    <string name="valider">Valider</string>
+    <string name="confirmer">Confirmer</string>
 </resources>

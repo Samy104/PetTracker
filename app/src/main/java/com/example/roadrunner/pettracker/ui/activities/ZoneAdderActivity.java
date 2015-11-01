@@ -1,5 +1,6 @@
 package com.example.roadrunner.pettracker.ui.activities;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -9,6 +10,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.roadrunner.pettracker.R;
@@ -66,21 +69,12 @@ public class ZoneAdderActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 try {
+                    showConfirmDialog();
 
-                    Zone zone = new Zone("Test", true, points);
-                    for (Coordonnees coordonnees : points) {
-                        coordonnees.setZone(zone);
-                    }
-
-                    for (Coordonnees coordonnees : points) {
-                        coordonneesDao.createOrUpdate(coordonnees);
-                    }
-
-                    zoneDao.create(zone);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-                onBackPressed();
+
             }
         });
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -155,6 +149,58 @@ public class ZoneAdderActivity extends AppCompatActivity {
         }
 
 
+    }
+
+    private void showConfirmDialog() throws SQLException {
+
+
+        final Dialog dialog = new Dialog(this);
+
+        //setting custom layout to dialog
+        dialog.setContentView(R.layout.dialog_zone_adder_name);
+        dialog.setTitle(getString(R.string.confirmer));
+
+        Button cancelButton = (Button) dialog.findViewById(R.id.btn_cancel_add_zone);
+        Button validateButton = (Button) dialog.findViewById(R.id.btn_validate_add_zone);
+        final EditText editTextName = (EditText) dialog.findViewById(R.id.edittext_name_zone);
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        validateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (editTextName.getText().length() != 0) {
+
+                    Zone zone = new Zone(editTextName.getText().toString(), true, points);
+                    for (Coordonnees coordonnees : points) {
+                        coordonnees.setZone(zone);
+                    }
+
+                    try {
+
+                        for (Coordonnees coordonnees : points) {
+                            coordonneesDao.createOrUpdate(coordonnees);
+                        }
+
+                        zoneDao.create(zone);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+
+                    onBackPressed();
+                }
+
+            }
+        });
+
+
+        dialog.show();
     }
 
     @Override
