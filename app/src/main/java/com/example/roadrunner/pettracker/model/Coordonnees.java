@@ -32,6 +32,11 @@ public class Coordonnees {
         this.longitude = longitude;
     }
 
+    public Coordonnees(LatLng latLng) {
+        this.latitude = latLng.latitude;
+        this.longitude = latLng.longitude;
+    }
+
     public int getId() {
         return id;
     }

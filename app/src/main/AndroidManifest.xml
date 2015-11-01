@@ -33,6 +33,7 @@
 
         <activity
             android:name=".ui.activities.MainActivity"
+            android:launchMode="singleTop"
             android:label="@string/title_activity_locator" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

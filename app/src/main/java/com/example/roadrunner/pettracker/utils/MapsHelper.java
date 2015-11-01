@@ -60,10 +60,10 @@ public class MapsHelper {
 
             }
 
-            for (Module module : zone.getAssociatedModules()) {
-
-                module.getCurrentPosition();
-            }
+//            for (Module module : zone.getAssociatedModules()) {
+//
+//                module.getCurrentPosition();
+//            }
 
         }
 

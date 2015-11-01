@@ -18,11 +18,11 @@
     <string name="manage_zones">Gestion des zones</string>
     <string name="manage_modules">Gestion des modules</string>
     <string name="tracking_modules">Suivi des modules</string>
-    <string name="title_activity_zone_adder">ZoneAdderActivity</string>
+    <string name="title_activity_zone_adder">Ajouter une zone</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_module_associer">ModuleAssocierActivity</string>
+    <string name="title_activity_module_associer">Associer un module</string>
     <string name="delete">delete</string>
 
     <string name="module_list">Modules associés</string>
@@ -36,4 +36,8 @@
 
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="enter_name">Entrez le nom de la zone</string>
+    <string name="annuler">Annuler</string>
+    <string name="valider">Valider</string>
+    <string name="confirmer">Confirmer</string>
 </resources>
