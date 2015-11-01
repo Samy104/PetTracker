@@ -1,17 +1,14 @@
 package com.example.roadrunner.pettracker.ui.activities;
 
 import android.graphics.Color;
-import android.location.Location;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.roadrunner.pettracker.R;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -39,6 +36,8 @@ public class ZoneAdderActivity extends AppCompatActivity {
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         points = new ArrayList<>();
 
@@ -78,15 +77,15 @@ public class ZoneAdderActivity extends AppCompatActivity {
                     if (points.size() % 2 == 0) {
 
                         double distance = distance(
-                                points.get(points.size()-2).latitude,
-                                points.get(points.size()-2).longitude,
-                                points.get(points.size()-1).latitude,
-                                points.get(points.size()-1).longitude
+                                points.get(points.size() - 2).latitude,
+                                points.get(points.size() - 2).longitude,
+                                points.get(points.size() - 1).latitude,
+                                points.get(points.size() - 1).longitude
                         );
 
 
                         Circle circle = googleMap.addCircle(new CircleOptions()
-                                .center(points.get(points.size()-2))
+                                .center(points.get(points.size() - 2))
                                 .radius(distance)
                                 .strokeColor(Color.RED)
                                 .fillColor(Color.BLUE));
@@ -135,6 +134,14 @@ public class ZoneAdderActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
+        if (id == android.R.id.home) {
+            Toast.makeText(this, "back", Toast.LENGTH_SHORT).show();
+            onBackPressed();
+
+
+//            getFragmentManager().popBackStackImmediate();
+        }
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -160,4 +167,5 @@ public class ZoneAdderActivity extends AppCompatActivity {
 
         mapView.onLowMemory();
     }
+
 }
