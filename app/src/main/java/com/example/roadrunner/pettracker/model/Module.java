@@ -13,7 +13,7 @@ import java.util.Random;
  * Created by gnut3ll4 on 14/10/15.
  */
 @DatabaseTable(tableName = "module")
-public class Module {
+public class Module implements Comparable<Module> {
 
     @DatabaseField(generatedId = true)
     int id;
@@ -100,5 +100,13 @@ public class Module {
             return null;
         }
         return new LatLng(currentPosition.latitude, currentPosition.longitude);
+    }
+
+    @Override
+    public int compareTo(Module anotherModule) {
+        if(this.id == anotherModule.id)
+            return 0;
+        else
+            return -1;
     }
 }
