@@ -74,8 +74,6 @@ public class ZoneManagerFragment extends Fragment {
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinate, 15));
 
 
-
-
             googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                 @Override
                 public void onMapClick(LatLng latLngClicked) {
@@ -204,7 +202,7 @@ public class ZoneManagerFragment extends Fragment {
 
                 Marker marker = googleMap.addMarker(new MarkerOptions()
                         .position(new LatLng(45.494441, -73.560595)) //random position
-                        .title(getString(R.string.module_list))
+                        .title(zone.getName())
                         .snippet(titles));
 
                 marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.one_px_transparent));
@@ -246,8 +244,6 @@ public class ZoneManagerFragment extends Fragment {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-
 
 
         super.onResume();
