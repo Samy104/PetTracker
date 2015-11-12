@@ -1,6 +1,7 @@
 package com.example.roadrunner.pettracker.ui.fragments;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -8,6 +9,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 // Addition
@@ -22,10 +24,13 @@ import com.example.roadrunner.pettracker.R;
 import com.example.roadrunner.pettracker.model.Module;
 import com.example.roadrunner.pettracker.ui.adapters.ModuleManagerAdapter;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 
 
 public class ModuleManagerFragment extends Fragment {
+
+    private static final int PICK_IMAGE=1;
 
     public static ModuleManagerFragment newInstance(String param1, String param2) {
         ModuleManagerFragment fragment = new ModuleManagerFragment();
@@ -71,6 +76,23 @@ public class ModuleManagerFragment extends Fragment {
 
                 final EditText input = (EditText) promptView.findViewById(R.id.moduleName);
 
+                final Button imageUploadButton = (Button) promptView.findViewById(R.id.upld_img_btn);
+                imageUploadButton.setOnClickListener(new View.OnClickListener(){
+
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                        intent.setType("image/*");
+                        Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        pickIntent.setType("image/*");
+
+                        Intent chooserIntent = Intent.createChooser(intent, "Select Image");
+                        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{pickIntent});
+
+                        startActivityForResult(chooserIntent, PICK_IMAGE);
+                    }
+                });
+
                 // Dialog Setup
                 alertDialogBuilder
                         .setCancelable(false)
@@ -95,6 +117,7 @@ public class ModuleManagerFragment extends Fragment {
             }
         });
 
+
         // Get the module adapter and populate the list from the DB
         moduleManagerAdapter = new ModuleManagerAdapter(getActivity());
         moduleManagerAdapter.populateModuleList();
@@ -108,5 +131,6 @@ public class ModuleManagerFragment extends Fragment {
 
 
     }
+
 
 }
